@@ -6,13 +6,13 @@ defmodule ExTwiml.UtilitiesTest do
   doctest ExTwiml.Utilities
 
   test ".create_tag reads default options out of application config" do
-    Application.put_env(:ex_twiml, :defaults, [say: [voice: "alice"]])
+    Application.put_env(:ex_twiml, :defaults, say: [voice: "alice"])
     assert create_tag(:opening, :say) == "<Say voice=\"alice\">"
     Application.delete_env(:ex_twiml, :defaults)
   end
 
   test ".create_tag allows defaults to be overridden" do
-    Application.put_env(:ex_twiml, :defaults, [say: [voice: "alice"]])
+    Application.put_env(:ex_twiml, :defaults, say: [voice: "alice"])
     assert create_tag(:opening, :say, voice: "woman") == "<Say voice=\"woman\">"
     Application.delete_env(:ex_twiml, :defaults)
   end

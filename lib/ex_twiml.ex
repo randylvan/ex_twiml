@@ -71,11 +71,25 @@ defmodule ExTwiml do
 
   @verbs [
     # Nested
-    :gather, :dial, :message, :task,
+    :gather,
+    :dial,
+    :message,
+    :task,
 
     # Non-nested
-    :say, :number, :play, :sms, :sip, :client, :conference, :queue, :enqueue,
-    :redirect, :body, :media, :identity
+    :say,
+    :number,
+    :play,
+    :sms,
+    :sip,
+    :client,
+    :conference,
+    :queue,
+    :enqueue,
+    :redirect,
+    :body,
+    :media,
+    :identity
   ]
 
   @simple_verbs [:leave, :hangup, :reject, :pause, :record, :parameter]
@@ -111,15 +125,20 @@ defmodule ExTwiml do
         # `tag` and `text` macros. This gives the impression that there
         # is a macro for each verb, when in fact it all expands to only
         # two macros.
-        unquote(block
-                |> Macro.prewalk(&prewalk(&1, __CALLER__.file))
-                |> Macro.postwalk(&postwalk/1))
+        unquote(
+          block
+          |> Macro.prewalk(&prewalk(&1, __CALLER__.file))
+          |> Macro.postwalk(&postwalk/1)
+        )
       end
 
-      xml  = render(var!(buffer, Twiml))      # Convert buffer to string
-      :ok  = stop_buffer(var!(buffer, Twiml)) # Kill the Agent
+      # Convert buffer to string
+      xml = render(var!(buffer, Twiml))
+      # Kill the Agent
+      :ok = stop_buffer(var!(buffer, Twiml))
 
-      xml # Return our pretty TwiML!
+      # Return our pretty TwiML!
+      xml
     end
   end
 
@@ -139,9 +158,9 @@ defmodule ExTwiml do
   """
   defmacro tag(name, options \\ [], do: inner) do
     quote do
-      put_buffer var!(buffer, Twiml), create_tag(:opening, unquote(name), unquote(options))
+      put_buffer(var!(buffer, Twiml), create_tag(:opening, unquote(name), unquote(options)))
       unquote(inner)
-      put_buffer var!(buffer, Twiml), create_tag(:closing, unquote(name))
+      put_buffer(var!(buffer, Twiml), create_tag(:closing, unquote(name)))
     end
   end
 
@@ -152,7 +171,7 @@ defmodule ExTwiml do
   """
   defmacro text(string) do
     quote do
-      put_buffer var!(buffer, Twiml), escape_text(to_string(unquote(string)))
+      put_buffer(var!(buffer, Twiml), escape_text(to_string(unquote(string))))
     end
   end
 
@@ -170,11 +189,11 @@ defmodule ExTwiml do
 
   @doc "Get the current state of a buffer."
   @spec get_buffer(pid) :: list
-  def get_buffer(buff), do: Agent.get(buff, &(&1)) |> Enum.reverse
+  def get_buffer(buff), do: Agent.get(buff, & &1) |> Enum.reverse()
 
   @doc "Render the contents of the buffer into a string."
-  @spec render(pid) :: String.t
-  def render(buff), do: Agent.get(buff, &(&1)) |> Enum.reverse |> Enum.join
+  @spec render(pid) :: String.t()
+  def render(buff), do: Agent.get(buff, & &1) |> Enum.reverse() |> Enum.join()
 
   ##
   # Private API
@@ -191,7 +210,7 @@ defmodule ExTwiml do
   # {:text, [], ["Hello World"]}
   defp postwalk({:text, _meta, [string]}) do
     # Just add the text to the buffer. Nothing else needed.
-    quote do: text unquote(string)
+    quote do: text(unquote(string))
   end
 
   # {:gather, [], [[do: inner]]}
@@ -241,7 +260,7 @@ defmodule ExTwiml do
   defp compile_simple(verb, string, options \\ []) do
     quote do
       tag unquote(verb), unquote(options) do
-        text unquote(string)
+        text(unquote(string))
       end
     end
   end
@@ -250,7 +269,7 @@ defmodule ExTwiml do
   defp compile_empty(verb, options \\ []) do
     quote do
       # Render only a single tag, with options
-      put_buffer var!(buffer, Twiml), create_tag(:self_closed, unquote(verb), unquote(options))
+      put_buffer(var!(buffer, Twiml), create_tag(:self_closed, unquote(verb), unquote(options)))
     end
   end
 
@@ -259,7 +278,7 @@ defmodule ExTwiml do
   end
 
   defp assert_no_verbs!({name, _, _} = var, file_name)
-  when is_atom(name) and name in @verbs do
+       when is_atom(name) and name in @verbs do
     raise ReservedNameError, [var, file_name]
   end
 
