@@ -2,16 +2,18 @@ defmodule ExTwiml.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :ex_twiml,
-     description: "Generate TwiML with Elixir",
-     version: "2.2.3",
-     elixir: "~> 1.0",
-     deps: deps(),
-     dialyzer: [
-       plt_file: "#{System.get_env("HOME")}/#{plt_filename()}",
-       flags: ["--no_native", "-Wno_match", "-Wno_return"]
-     ],
-     package: package()]
+    [
+      app: :ex_twiml,
+      description: "Generate TwiML with Elixir",
+      version: "2.2.3",
+      elixir: "~> 1.0",
+      deps: deps(),
+      dialyzer: [
+        plt_file: "#{System.get_env("HOME")}/#{plt_filename()}",
+        flags: ["--no_native", "-Wno_match", "-Wno_return"]
+      ],
+      package: package()
+    ]
   end
 
   # Configuration for the OTP application
@@ -32,6 +34,7 @@ defmodule ExTwiml.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
+      {:credo, "~> 1.6", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: [:dev, :docs]},
       {:inch_ex, ">= 0.0.0", only: :docs}
     ]
@@ -49,12 +52,12 @@ defmodule ExTwiml.Mixfile do
   end
 
   defp plt_filename do
-    "elixir-#{System.version}_#{otp_release()}.plt"
+    "elixir-#{System.version()}_#{otp_release()}.plt"
   end
 
   defp otp_release do
     case System.get_env("TRAVIS_OTP_RELEASE") do
-      nil     -> :erlang.system_info(:otp_release)
+      nil -> :erlang.system_info(:otp_release)
       release -> release
     end
   end

@@ -19,7 +19,7 @@ defmodule ExTwiml.Utilities do
       iex> ExTwiml.Utilities.create_tag(:closing, :say)
       "</Say>"
   """
-  @spec create_tag(atom, atom, Keyword.t) :: String.t
+  @spec create_tag(atom, atom, Keyword.t()) :: String.t()
   def create_tag(type, name, options \\ []) do
     options = Keyword.merge(defaults(name), options)
     do_create_tag(type, capitalize(name), xml_attributes(options))
@@ -52,9 +52,9 @@ defmodule ExTwiml.Utilities do
       iex> ExTwiml.Utilities.capitalize("string")
       "String"
   """
-  @spec capitalize(atom) :: String.t
+  @spec capitalize(atom) :: String.t()
   def capitalize(atom) do
-    String.capitalize to_string(atom)
+    String.capitalize(to_string(atom))
   end
 
   @doc """
@@ -68,7 +68,7 @@ defmodule ExTwiml.Utilities do
       iex> ExTwiml.Utilities.xml_attributes([digits: 1, finish_on_key: "#"])
       " digits=\\"1\\" finishOnKey=\\"#\\""
   """
-  @spec xml_attributes(list) :: String.t
+  @spec xml_attributes(list) :: String.t()
   def xml_attributes(attrs) do
     for {key, val} <- attrs,
         into: "",
@@ -83,7 +83,7 @@ defmodule ExTwiml.Utilities do
       ...> ExTwiml.Utilities.camelize("finish_on_key")
       "finishOnKey"
   """
-  @spec camelize(String.t) :: String.t
+  @spec camelize(String.t()) :: String.t()
   def camelize(string) do
     string = to_string(string)
     parts = String.split(string, "_", parts: 2)
@@ -108,7 +108,7 @@ defmodule ExTwiml.Utilities do
   Note: we must to escape only "&" and "<",
   but, its common to escape more special characters
   """
-  @spec escape_attr(String.t) :: String.t
+  @spec escape_attr(String.t()) :: String.t()
   def escape_attr(string) do
     string
     |> replace("&", "&amp;")
@@ -123,7 +123,7 @@ defmodule ExTwiml.Utilities do
   @doc """
   escape special characters in XML text
   """
-  @spec escape_text(String.t) :: String.t
+  @spec escape_text(String.t()) :: String.t()
   def escape_text(string) do
     string
     |> replace("&", "&amp;")
