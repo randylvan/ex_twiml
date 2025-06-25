@@ -63,6 +63,64 @@ defmodule ExTwiml do
       </Response>
 
   You'd then need to render this string to the browser.
+
+  ## Stream Support
+
+  How to start unidirectional streaming (audio fork) with `<Start>` and `<Stream>`:
+
+      twiml do
+        start do
+          stream url: "wss://example.com/audiostream" do
+          end
+        end
+        say "This call is being streamed"
+      end
+
+      # Generates
+      <?xml version="1.0" encoding="UTF-8"?>
+      <Response>
+        <Start>
+          <Stream url="wss://example.com/audiostream"></Stream>
+        </Start>
+        <Say>This call is being streamed</Say>
+      </Response>
+
+  How to use bidirectional streaming with `<Connect>` and `<Stream>`:
+
+      twiml do
+        connect do
+          stream url: "wss://example.com/audiostream" do
+          end
+        end
+      end
+
+      # Note: With Connect, the call waits until the WebSocket is closed
+      # before continuing to the next instruction
+
+  Stream with custom parameters:
+
+      twiml do
+        start do
+          stream url: "wss://transcription.example.com/audio",
+                 name: "call_transcript",
+                 track: "both_tracks",
+                 status_callback: "https://example.com/stream-status" do
+            parameter name: "CallSid", value: call_sid
+            parameter name: "Language", value: "en-US"
+            parameter name: "CustomerId", value: customer_id
+          end
+        end
+        say "This call is being transcribed"
+      end
+
+  Stop a named stream:
+
+      twiml do
+        stop do
+          stream name: "call_transcript" do
+          end
+        end
+      end
   """
 
   import ExTwiml.Utilities
@@ -75,6 +133,10 @@ defmodule ExTwiml do
     :dial,
     :message,
     :task,
+    :start,
+    :connect,
+    :stream,
+    :stop,
 
     # Non-nested
     :say,
