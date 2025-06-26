@@ -399,7 +399,6 @@ defmodule ExTwimlTest do
     assert_twiml(markup, "<Mms to=\"112345&apos;\">hello</Mms>")
   end
 
-
   test "can render the <Start> verb with <Stream>" do
     markup =
       twiml do
@@ -448,8 +447,8 @@ defmodule ExTwimlTest do
       twiml do
         start do
           stream url: "wss://example.com/audio" do
-            parameter name: "CustomerId", value: "12345"
-            parameter name: "SessionId", value: "abc-123"
+            parameter(name: "CustomerId", value: "12345")
+            parameter(name: "SessionId", value: "abc-123")
           end
         end
       end
@@ -479,10 +478,13 @@ defmodule ExTwimlTest do
           stream url: "wss://example.com/audio", name: "call_stream" do
           end
         end
-        say "Recording started"
+
+        say("Recording started")
+
         gather digits: 1 do
-          say "Press 1 to stop recording"
+          say("Press 1 to stop recording")
         end
+
         stop do
           stream name: "call_stream" do
           end
@@ -502,8 +504,8 @@ defmodule ExTwimlTest do
           stream url: "wss://transcription-service.com/audio",
                  name: "call_transcript",
                  track: "both_tracks" do
-            parameter name: "CallSid", value: "CA123456"
-            parameter name: "Language", value: "en-US"
+            parameter(name: "CallSid", value: "CA123456")
+            parameter(name: "Language", value: "en-US")
           end
         end
       end
