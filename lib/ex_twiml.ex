@@ -137,6 +137,7 @@ defmodule ExTwiml do
     :connect,
     :stream,
     :stop,
+    :transcription,
 
     # Non-nested
     :say,
