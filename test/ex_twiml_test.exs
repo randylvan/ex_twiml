@@ -447,8 +447,8 @@ defmodule ExTwimlTest do
       twiml do
         start do
           stream url: "wss://example.com/audio" do
-            parameter name: "CustomerId", value: "12345"
-            parameter name: "SessionId", value: "abc-123"
+            parameter(name: "CustomerId", value: "12345")
+            parameter(name: "SessionId", value: "abc-123")
           end
         end
       end
@@ -478,10 +478,13 @@ defmodule ExTwimlTest do
           stream url: "wss://example.com/audio", name: "call_stream" do
           end
         end
-        say "Recording started"
+
+        say("Recording started")
+
         gather digits: 1 do
-          say "Press 1 to stop recording"
+          say("Press 1 to stop recording")
         end
+
         stop do
           stream name: "call_stream" do
           end
@@ -501,8 +504,8 @@ defmodule ExTwimlTest do
           stream url: "wss://transcription-service.com/audio",
                  name: "call_transcript",
                  track: "both_tracks" do
-            parameter name: "CallSid", value: "CA123456"
-            parameter name: "Language", value: "en-US"
+            parameter(name: "CallSid", value: "CA123456")
+            parameter(name: "Language", value: "en-US")
           end
         end
       end
@@ -530,7 +533,10 @@ defmodule ExTwimlTest do
         end
       end
 
-    assert_twiml(markup, "<Transcription name=\"call_transcript\" language=\"en-US\"></Transcription>")
+    assert_twiml(
+      markup,
+      "<Transcription name=\"call_transcript\" language=\"en-US\"></Transcription>"
+    )
   end
 
   test "can render the <Transcription> verb with track attribute" do
@@ -547,10 +553,10 @@ defmodule ExTwimlTest do
     markup =
       twiml do
         transcription name: "live_transcript",
-                     track: "both_tracks",
-                     language: "en-US",
-                     status_callback: "https://example.com/transcription-status",
-                     status_callback_method: "POST" do
+                      track: "both_tracks",
+                      language: "en-US",
+                      status_callback: "https://example.com/transcription-status",
+                      status_callback_method: "POST" do
         end
       end
 
@@ -569,16 +575,19 @@ defmodule ExTwimlTest do
         end
       end
 
-    assert_twiml(markup, "<Start><Transcription name=\"call_transcript\" language=\"en-US\"></Transcription></Start>")
+    assert_twiml(
+      markup,
+      "<Start><Transcription name=\"call_transcript\" language=\"en-US\"></Transcription></Start>"
+    )
   end
 
   test "can render <Transcription> with nested <Parameter> elements" do
     markup =
       twiml do
         transcription name: "call_transcript" do
-          parameter name: "CallSid", value: "CA123456"
-          parameter name: "AccountSid", value: "AC789012"
-          parameter name: "CustomField", value: "custom_value"
+          parameter(name: "CallSid", value: "CA123456")
+          parameter(name: "AccountSid", value: "AC789012")
+          parameter(name: "CustomField", value: "custom_value")
         end
       end
 
@@ -594,6 +603,7 @@ defmodule ExTwimlTest do
         start do
           transcription name: "inbound_transcript", track: "inbound_track" do
           end
+
           transcription name: "outbound_transcript", track: "outbound_track" do
           end
         end
@@ -610,16 +620,19 @@ defmodule ExTwimlTest do
       twiml do
         start do
           transcription name: "live_call_transcript",
-                       language: "en-US",
-                       track: "both_tracks" do
-            parameter name: "CallSid", value: "CA123456"
-            parameter name: "CustomerName", value: "John Doe"
+                        language: "en-US",
+                        track: "both_tracks" do
+            parameter(name: "CallSid", value: "CA123456")
+            parameter(name: "CustomerName", value: "John Doe")
           end
         end
-        say "This call is being transcribed for quality assurance"
+
+        say("This call is being transcribed for quality assurance")
+
         gather digits: 1 do
-          say "Press 1 to stop transcription"
+          say("Press 1 to stop transcription")
         end
+
         stop do
           transcription name: "live_call_transcript" do
           end
@@ -636,11 +649,14 @@ defmodule ExTwimlTest do
     markup =
       twiml do
         transcription name: "filtered_transcript",
-                     profanity_filter: true do
+                      profanity_filter: true do
         end
       end
 
-    assert_twiml(markup, "<Transcription name=\"filtered_transcript\" profanityFilter=\"true\"></Transcription>")
+    assert_twiml(
+      markup,
+      "<Transcription name=\"filtered_transcript\" profanityFilter=\"true\"></Transcription>"
+    )
   end
 
   test "can render <Transcription> with options as a variable" do
@@ -652,7 +668,10 @@ defmodule ExTwimlTest do
         end
       end
 
-    assert_twiml(markup, "<Transcription name=\"dynamic_transcript\" language=\"es-ES\" track=\"inbound_track\"></Transcription>")
+    assert_twiml(
+      markup,
+      "<Transcription name=\"dynamic_transcript\" language=\"es-ES\" track=\"inbound_track\"></Transcription>"
+    )
   end
 
   defp assert_twiml(lhs, rhs) do
